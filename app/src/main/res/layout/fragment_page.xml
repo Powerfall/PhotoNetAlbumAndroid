@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/phonk" android:orientation="vertical">
+    <LinearLayout
+            android:id="@+id/panelSize"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="31dp">
+        <SeekBar
+                android:layout_width="0dp"
+                android:layout_height="0dp" android:id="@+id/seekBar" android:layout_weight="1"/>
+        <TextView
+                android:text="percent"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp" android:id="@+id/percent" android:layout_weight="1"/>
+        <Switch
+                android:text="@string/changesize"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/switcher" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Space
+                android:layout_width="162dp"
+                android:layout_height="match_parent" android:layout_weight="1"/>
+        <Button
+                android:text="Создать сессию"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/btnGO"
+                style="?android:attr/buttonStyle" android:background="@android:drawable/btn_default"/>
+        <Space
+                android:layout_width="162dp"
+                android:layout_height="match_parent" android:layout_weight="1"/>
+    </LinearLayout>
+    <TextView
+            android:text="TextView"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" android:id="@+id/textCode"
+            android:textSize="18sp" tools:ignore="Suspicious0dp"
+            android:textIsSelectable="true" android:textStyle="bold" android:textColor="@color/colorTabs"
+            android:background="@android:drawable/dialog_holo_dark_frame"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/toPath"
+            android:background="@android:drawable/editbox_dropdown_light_frame"/>
+    <GridView
+            android:id="@+id/grid_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numColumns="3"
+            android:columnWidth="90dp"
+            android:horizontalSpacing="10dp"
+            android:verticalSpacing="10dp"
+            android:gravity="center"
+            android:stretchMode="columnWidth"
+            android:background="@android:drawable/editbox_background"/>
+
+</LinearLayout>

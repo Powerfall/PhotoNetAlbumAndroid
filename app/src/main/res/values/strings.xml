@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PhotoNetAlbum</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_p1">Создать</string>
+    <string name="title_p2">Подключиться</string>
+    <string name="title_chat">Чат</string>
+    <string name="folder1">папка №1</string>
+    <string name="Create">создать новую папку</string>
+    <string name="hint">hint</string>
+    <string name="open_go">open</string>
+    <string name="open_back">back</string>
+    <string name="changesize">Изменить размер фотографий?</string>
+</resources>
