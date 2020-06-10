@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private int requestCode = 100;
-    TextView textPath;
     private int pageCount = 1;
     private TabLayout Folder;
     private NonSweepViewPager viewPager;
@@ -120,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void connection(){
+        //TODO: сделать считывание кода и подключение к серверу
         if (connectioCode.getText().toString().equals("1234")){
             InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);

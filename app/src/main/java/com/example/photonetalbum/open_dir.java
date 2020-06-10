@@ -34,6 +34,7 @@ public class open_dir {
     Context _context;
     int select_id_list = -1;
     LinearLayout panel;
+    TextView textFolder;
     String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
     String genCode = null;
     EditText newName;
@@ -47,6 +48,7 @@ public class open_dir {
         textPath = (TextView) page.findViewById(R.id.toPath);
         code = (TextView) page.findViewById(R.id.textCode);
         btnGO = (Button)  page.findViewById(R.id.btnGO);
+        textFolder = (TextView) page.findViewById(R.id.lineforuser0);
         adapter = new ArrayAdapter<String>(_context, android.R.layout.simple_list_item_1, ArrayDir);
         panel = (LinearLayout) page.findViewById(R.id.panelSize);
         list_dir.setAdapter(adapter);
@@ -71,6 +73,16 @@ public class open_dir {
         });
         switch (userNumber) {
             case 1:
+                textFolder = (TextView) page.findViewById(R.id.lineforuser0);
+                ViewGroup.LayoutParams paramnull0 = (ViewGroup.LayoutParams)  textFolder.getLayoutParams( );
+                ViewGroup.LayoutParams paramnull = (ViewGroup.LayoutParams)  page.findViewById(R.id.lineforuser1).getLayoutParams( );
+                paramnull0.height = 0;
+                paramnull0.width = 0;
+                paramnull.height = 0;
+                paramnull.width = 0;
+                textFolder.setLayoutParams(paramnull0);
+                page.findViewById(R.id.lineforuser1).setLayoutParams(paramnull);
+                page.findViewById(R.id.lineforuser2).setLayoutParams(paramnull);
                 if (genCode != null) {
                     setGcode(genCode);
                 }
@@ -129,7 +141,7 @@ public class open_dir {
                 btnGO.setOnClickListener(new View.OnClickListener( ) {
                     @Override
                     public void onClick(View v) {
-                        //TODO: сделать запуск сессии и вывод кода
+                        //TODO: сделать запуск сессии и генерацию кода
                         genCode = "2f4s5";
                         setGcode(genCode);
                     }
@@ -140,15 +152,13 @@ public class open_dir {
                 paramfornull.height = 0;
                 paramfornull.width = 0;
                 panel.setLayoutParams(paramfornull);
-                btnGO.setText("Загрузить");
+                btnGO.setText("Загрузить сюда");
                 btnGO.setOnClickListener(new View.OnClickListener( ) {
                     @Override
                     public void onClick(View v) {
                         //TODO: сделать загрузку файлов с сервера
-                        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) code.getLayoutParams( );
-                        params.height = 70;
-                        code.setLayoutParams(params);
-                        code.setText("Jlen");
+                        btnGO.setText("Отправить изменения");
+                        textFolder.setText("Загруженная папка:");
                     }
                 });
                 break;
@@ -220,21 +230,38 @@ public class open_dir {
     }
 
     public void alertdialog(final String filename) {
-        final CharSequence[] items = {"Переименовать","два","три"};//имена методов Ваших в списке
+        final CharSequence[] items = {"Создать папку","Удалить","Отправить папку","Копировать","Вырезать","Вставить","Переименовать", "Информация"};//имена методов Ваших в списке
         final Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Выберите функцию");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             public void onClick(DialogInterface dialog, int item) {
-                if (item == 0) { //"один"
-                    //rename(filename);
+                //TODO: Добавить все изменения для файлов и папок
+                if (item == 0) { //"Создать папку"
+                    dialogcreatefolder();
+                }
+                if (item == 1) {
+                    //method
+                }
+                if (item == 2) {
+                    //method
+                }
+                if (item == 3) {
+                    //method
+                }
+                if (item == 4) {
+                    //method
+                }
+                if (item == 5) {
+                    //method
+                }
+                if (item == 6) {
+                    //method
                     dialogname(filename);
                 }
-                if (item == 1) { //"два"
+                if (item == 7) {
                     //method
-                }
-                if (item == 2) { //"три"
-                    //method
+                    dialoginfo(filename);
                 }
             }
         });
@@ -256,15 +283,45 @@ public class open_dir {
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //_context.getDialog().cancel();
+
             }
         });
         newName = (EditText) builder.show().findViewById(R.id.newName);
         newName.setText(filename);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void dialogcreatefolder(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        builder.setTitle("Введите название папки").setView(R.layout.rename_dialog);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                System.out.println(newName.getText());
+                //TODO: добавить фу-ю создания папки
+                update_list_dir();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        newName = (EditText) builder.show().findViewById(R.id.newName);
+        newName.setText("");
+    }
+
+    private void dialoginfo(String filename){
+        //TODO: добавить определение информации о папках и файлах
+        final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        builder.setTitle("Информация");
+        java.io.File file = new java.io.File(path+filename);
+        builder.setMessage("Название: "+filename+"\n"+"Вес: "+file.length());
+        builder.show();
+    }
+
     private void rename(String filename, String newFilename){
-        java.io.File file = new java.io.File(path+filename); // создаем объект на файл test.txt
+        java.io.File file = new java.io.File(path+filename);
         file.renameTo(new java.io.File(path+newFilename));
     }
 
