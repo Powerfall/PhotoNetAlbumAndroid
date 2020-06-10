@@ -1,5 +1,8 @@
 package com.client;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import androidx.annotation.RequiresApi;
 import com.ChatController;
 import com.album.Client2;
 import com.connection.Connection;
@@ -185,6 +188,7 @@ public class Client {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         void clientLoop() throws Exception {
             Message message;
             for (; ; ) {
@@ -224,6 +228,8 @@ public class Client {
             }
         }
 
+        @TargetApi(Build.VERSION_CODES.N)
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void run() {
             String serverIP = getServerIP();

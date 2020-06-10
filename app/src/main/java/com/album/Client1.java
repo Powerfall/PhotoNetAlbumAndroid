@@ -2,15 +2,6 @@ package com.album;
 
 import com.files.Photo;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -54,7 +45,7 @@ public class Client1 {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 FileInputStream fis = new FileInputStream(file);
                 BufferedInputStream bis = new BufferedInputStream(fis);
-                int theByte = 0;
+                int theByte;
                 while((theByte = bis.read()) != -1) bos.write(theByte);
                 bos.close();
                 photo.setByteArray(bos.toByteArray());
