@@ -29,7 +29,8 @@ public class Client1 {
         for (File file : files) {
             Photo photo = new Photo();
             if (compressionQuality != 1f) {
-                bStream = new ByteArrayOutputStream();
+                System.out.println("СЖИМАЕМ!");
+                /*bStream = new ByteArrayOutputStream();
                 ImageOutputStream sos = new MemoryCacheImageOutputStream(bStream);
                 ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
                 ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
@@ -47,16 +48,18 @@ public class Client1 {
                 photo.setByteArray(bStream.toByteArray());
                 photos.add(photo);
                 sos.flush();
-                bis.close();
+                bis.close();*/
             } else {
                 System.out.println("НЕ СЖИМАЕМ!");
-                BufferedImage bufferedImage = ImageIO.read(file);
-
-                WritableRaster raster = bufferedImage.getRaster();
-                DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
-                photo.setByteArray(data.getData());
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                int theByte = 0;
+                while((theByte = bis.read()) != -1) bos.write(theByte);
+                bos.close();
+                photo.setByteArray(bos.toByteArray());
                 photo.setName(file.getName());
-                photo.setSize(data.getData().length);
+                photo.setSize(bos.size());
                 photos.add(photo);
             }
         }
