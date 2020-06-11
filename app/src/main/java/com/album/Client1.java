@@ -1,16 +1,8 @@
 package com.album;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import com.files.Photo;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -30,36 +22,25 @@ public class Client1 {
             Photo photo = new Photo();
             if (compressionQuality != 1f) {
                 System.out.println("СЖИМАЕМ!");
-                /*bStream = new ByteArrayOutputStream();
-                ImageOutputStream sos = new MemoryCacheImageOutputStream(bStream);
-                ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
-                ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
-                jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                jpgWriteParam.setCompressionQuality(compressionQuality);
-                jpgWriter.setOutput(sos);
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                BufferedImage capture = ImageIO.read(file);
-                IIOImage outputImage = new IIOImage(capture, null, null);
-                jpgWriter.write(null, outputImage, jpgWriteParam);
+                bStream = new ByteArrayOutputStream();
+                Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
+                bmp.compress(Bitmap.CompressFormat.JPEG, (int)compressionQuality*100, bStream);
                 photo.setSize(bStream.size());
                 String name = file.getName();
                 photo.setName(name);
                 photo.setByteArray(bStream.toByteArray());
                 photos.add(photo);
-                sos.flush();
-                bis.close();*/
             } else {
                 System.out.println("НЕ СЖИМАЕМ!");
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bStream = new ByteArrayOutputStream();
                 FileInputStream fis = new FileInputStream(file);
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 int theByte = 0;
-                while((theByte = bis.read()) != -1) bos.write(theByte);
-                bos.close();
-                photo.setByteArray(bos.toByteArray());
+                while((theByte = bis.read()) != -1) bStream.write(theByte);
+                bStream.close();
+                photo.setByteArray(bStream.toByteArray());
                 photo.setName(file.getName());
-                photo.setSize(bos.size());
+                photo.setSize(bStream.size());
                 photos.add(photo);
             }
         }
