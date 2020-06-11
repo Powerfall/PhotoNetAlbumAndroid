@@ -1,12 +1,14 @@
 package explorer;
 
+import android.os.Build;
+import androidx.annotation.RequiresApi;
 import com.ChatController;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Changes implements Serializable {
@@ -18,6 +20,7 @@ public class Changes implements Serializable {
         id = hashCode();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void acceptChanges(Changes changes, String pathToFolder) throws IOException {
         ArrayList<Change> listOfChanges = changes.getChanges();
 
@@ -32,11 +35,11 @@ public class Changes implements Serializable {
                     break;
                 }
                 case COPY_PHOTO: {
-                    Files.copy(Path.of(pathToFolder + "\\" + change.getOld_path()), Path.of(pathToFolder + "\\" + change.getNew_path()));
+                    Files.copy(Paths.get(pathToFolder + "\\" + change.getOld_path()), Paths.get(pathToFolder + "\\" + change.getNew_path()));
                     break;
                 }
                 case MOVE_PHOTO: {
-                    Files.move(Path.of(pathToFolder + "\\" + change.getOld_path()), Path.of(pathToFolder + "\\" + change.getNew_path()));
+                    Files.move(Paths.get(pathToFolder + "\\" + change.getOld_path()), Paths.get(pathToFolder + "\\" + change.getNew_path()));
                     break;
                 }
                 case RENAME_PHOTO:

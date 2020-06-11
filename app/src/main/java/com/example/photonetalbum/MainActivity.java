@@ -13,12 +13,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
+import com.album.Client2;
+import com.client.Client;
 import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private int requestCode = 100;
@@ -31,14 +35,15 @@ public class MainActivity extends AppCompatActivity {
     private Button btnConnect;
     private final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
     private boolean isconnect = false;
+    private Client client;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener( ) {
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             System.out.println(item);
-            switch (item.getItemId( )) {
+            switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Folder.setVisibility(View.VISIBLE);
                     viewPager.setVisibility(View.VISIBLE);
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
     }
 
-    private void startProgram(){
+    private void startProgram() {
         setContentView(R.layout.activity_main);
         Folder = (TabLayout) findViewById(R.id.Folder);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         connectioCode = (EditText) fragUserConnect.findViewById(R.id.conCode);
         fragUserConnect.setVisibility(View.INVISIBLE);
         btnConnect = (Button) fragUserConnect.findViewById(R.id.btnConnect);
-        btnConnect.setOnClickListener(new View.OnClickListener( ) {
+        btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 connection();
@@ -92,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 System.out.println("position " + tab.getPosition());
-                if (tab.getPosition() == pageCount){
-                    adapter.changeFragment(new PageFragmentUser1(), "Папка №"+(pageCount+1), pageCount);
+                if (tab.getPosition() == pageCount) {
+                    adapter.changeFragment(new PageFragmentUser1(), "Папка №" + (pageCount + 1), pageCount);
                     Folder.getTabAt(0).select();
                     pageCount++;
                     //adapter.allFragment();
@@ -113,23 +118,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        adapter.addFragment(new PageFragmentUser1(), "Папка №1",0);
-        adapter.addFragment(new PageFragmentUser1(), "+",1);
+        adapter.addFragment(new PageFragmentUser1(), "Папка №1", 0);
+        adapter.addFragment(new PageFragmentUser1(), "+", 1);
         viewPager.setAdapter(adapter);
     }
 
-    public void connection(){
-        //TODO: сделать считывание кода и подключение к серверу
-        if (connectioCode.getText().toString().equals("1234")){
-            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            fragUser2.setVisibility(View.VISIBLE);
-            fragUserConnect.setVisibility(View.INVISIBLE);
-            isconnect = true;
-        }
-        else {
-            Toast.makeText(this, "Неверный код", Toast.LENGTH_SHORT)
-                    .show();
+    public void connection() {
+        if (!connectioCode.getText().toString().trim().isEmpty()) {
+            client = new Client(open_dir.userNumber, connectioCode.getText().toString());
+            Thread thread = new Thread(() -> client.run());
+            thread.setDaemon(true);
+            thread.start();
+            while (client.isClientCanConnect()) {
+                if (client.isClientConnected()) {
+                    if (Client2.sizeChangedListener()) {
+                        InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        fragUser2.setVisibility(View.VISIBLE);
+                        fragUserConnect.setVisibility(View.INVISIBLE);
+                        isconnect = true;
+                    }
+                    else {
+                        Toast.makeText(this, "Неверный код", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+            }
         }
     }
 
@@ -149,10 +163,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode);
-        }
-        else {
+        } else {
             startProgram();
         }
     }

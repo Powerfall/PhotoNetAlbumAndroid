@@ -1,4 +1,5 @@
 package com.example.photonetalbum;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import com.album.Client1;
 import com.client.Client;
 import com.google.android.material.navigation.NavigationView;
 
@@ -37,13 +39,13 @@ class open_dir {
     private int select_id_list = -1;
     private LinearLayout panel;
     private TextView textFolder;
-    private String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
+    private String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
     private String genCode = null;
     private EditText newName;
     private Client client;
-    private int userNumber;
+    public static int userNumber;
 
-    ArrayList<String> ArrayDir = new ArrayList<String>( );
+    ArrayList<String> ArrayDir = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
     protected void onCreate(Context con, View page, final int userNumber) {
@@ -51,36 +53,35 @@ class open_dir {
         list_dir = (GridView) page.findViewById(R.id.grid_view);
         textPath = (TextView) page.findViewById(R.id.toPath);
         code = (TextView) page.findViewById(R.id.textCode);
-        btnGO = (Button)  page.findViewById(R.id.btnGO);
+        btnGO = (Button) page.findViewById(R.id.btnGO);
         textFolder = (TextView) page.findViewById(R.id.lineforuser0);
         adapter = new ArrayAdapter<String>(_context, android.R.layout.simple_list_item_1, ArrayDir);
         panel = (LinearLayout) page.findViewById(R.id.panelSize);
         list_dir.setAdapter(adapter);
-        this.userNumber = userNumber;
+        open_dir.userNumber = userNumber;
         update_list_dir();
-        list_dir.setOnItemClickListener(new OnItemClickListener( ) {
+        list_dir.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (ArrayDir.get((int)id).substring(ArrayDir.get((int)id).lastIndexOf(".") + 1).equals("jpg")){
-                    ShowDialogBox(ArrayDir.get((int)id), path+ArrayDir.get((int)id));
-                }
-                else if (ArrayDir.get((int)id).equals("<--")) onClickBack();
+                if (ArrayDir.get((int) id).substring(ArrayDir.get((int) id).lastIndexOf(".") + 1).equals("jpg")) {
+                    ShowDialogBox(ArrayDir.get((int) id), path + ArrayDir.get((int) id));
+                } else if (ArrayDir.get((int) id).equals("<--")) onClickBack();
                 else {
                     select_id_list = (int) id;
-                    update_list_dir( );
+                    update_list_dir();
                 }
             }
         });
-        list_dir.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener( ) {
+        list_dir.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                alertdialog(ArrayDir.get((int)id));
+                alertdialog(ArrayDir.get((int) id));
                 return true;
             }
         });
         switch (userNumber) {
             case 1:
                 textFolder = (TextView) page.findViewById(R.id.lineforuser0);
-                ViewGroup.LayoutParams paramnull0 = (ViewGroup.LayoutParams)  textFolder.getLayoutParams( );
-                ViewGroup.LayoutParams paramnull = (ViewGroup.LayoutParams)  page.findViewById(R.id.lineforuser1).getLayoutParams( );
+                ViewGroup.LayoutParams paramnull0 = (ViewGroup.LayoutParams) textFolder.getLayoutParams();
+                ViewGroup.LayoutParams paramnull = (ViewGroup.LayoutParams) page.findViewById(R.id.lineforuser1).getLayoutParams();
                 paramnull0.height = 0;
                 paramnull0.width = 0;
                 paramnull.height = 0;
@@ -94,13 +95,13 @@ class open_dir {
                 final Switch switcher = (Switch) page.findViewById(R.id.switcher);
                 final SeekBar seek = (SeekBar) page.findViewById(R.id.seekBar);
                 final TextView percent = (TextView) page.findViewById(R.id.percent);
-                switcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener( ) {
+                switcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        ViewGroup.LayoutParams paramforseek = (ViewGroup.LayoutParams) seek.getLayoutParams( );
-                        ViewGroup.LayoutParams paramforprcnt = (ViewGroup.LayoutParams) percent.getLayoutParams( );
-                        ViewGroup.LayoutParams paramforline = (ViewGroup.LayoutParams) panel.getLayoutParams( );
-                        if (isChecked){
+                        ViewGroup.LayoutParams paramforseek = (ViewGroup.LayoutParams) seek.getLayoutParams();
+                        ViewGroup.LayoutParams paramforprcnt = (ViewGroup.LayoutParams) percent.getLayoutParams();
+                        ViewGroup.LayoutParams paramforline = (ViewGroup.LayoutParams) panel.getLayoutParams();
+                        if (isChecked) {
                             switcher.setText("Качество фото");
                             paramforline.height = 100;
                             paramforseek.width = 1000;
@@ -110,8 +111,7 @@ class open_dir {
                             seek.setLayoutParams(paramforseek);
                             percent.setLayoutParams(paramforprcnt);
                             panel.setLayoutParams(paramforline);
-                        }
-                        else {
+                        } else {
                             switcher.setText("Изменять размер фотографий ?");
                             paramforline.height = 85;
                             paramforseek.width = 0;
@@ -126,11 +126,11 @@ class open_dir {
                 });
                 percent.setText("90");
                 seek.setProgress(90);
-                seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener( ) {
+                seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         percent.setText(String.valueOf(seekBar.getProgress()));
-                        //TODO: Считать сжатие отсюда
+                        Client1.compressionQuality = seekBar.getProgress();
                     }
 
                     @Override
@@ -143,36 +143,30 @@ class open_dir {
 
                     }
                 });
-                btnGO.setOnClickListener(new View.OnClickListener( ) {
-                    @Override
-                    public void onClick(View v) {
-                        client = new Client(userNumber, UUID.randomUUID().toString());
-                        genCode = client.getToken();
-                        setGcode(genCode);
-                    }
+                btnGO.setOnClickListener(v -> {
+                    client = new Client(userNumber, UUID.randomUUID().toString());
+                    genCode = client.getToken();
+                    setGcode(genCode);
                 });
                 break;
             case 2:
-                ViewGroup.LayoutParams paramfornull = (ViewGroup.LayoutParams) panel.getLayoutParams( );
+                ViewGroup.LayoutParams paramfornull = panel.getLayoutParams();
                 paramfornull.height = 0;
                 paramfornull.width = 0;
                 panel.setLayoutParams(paramfornull);
                 btnGO.setText("Загрузить сюда");
-                btnGO.setOnClickListener(new View.OnClickListener( ) {
-                    @Override
-                    public void onClick(View v) {
-                        //TODO: сделать загрузку файлов с сервера
-                        btnGO.setText("Отправить изменения");
-                        textFolder.setText("Загруженная папка:");
-                    }
+                btnGO.setOnClickListener(v -> {
+                    //TODO: сделать загрузку файлов с сервера
+                    btnGO.setText("Отправить изменения");
+                    textFolder.setText("Загруженная папка:");
                 });
                 break;
         }
     }
 
-    private void setGcode(String gcode){
-        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) code.getLayoutParams( );
-        ViewGroup.LayoutParams paramsforbtn = (ViewGroup.LayoutParams) btnGO.getLayoutParams( );
+    private void setGcode(String gcode) {
+        ViewGroup.LayoutParams params = code.getLayoutParams();
+        ViewGroup.LayoutParams paramsforbtn = btnGO.getLayoutParams();
         paramsforbtn.height = 0;
         paramsforbtn.width = 0;
         params.height = 130;
@@ -187,8 +181,7 @@ class open_dir {
         if (tmp != null) {
             if (!tmp.equals("/")) {
                 path = tmp + "/";
-            }
-            else {
+            } else {
                 path = tmp;
             }
             update_list_dir();
@@ -196,36 +189,34 @@ class open_dir {
     }
 
     private void update_list_dir() {
-        if (select_id_list != -1)
-        {
+        if (select_id_list != -1) {
             path = path + ArrayDir.get(select_id_list) + "/";
         }
         select_id_list = -1;
         ArrayDir.clear();
         File[] files = new File(path).listFiles();
-        System.out.println("path= "+path);
+        System.out.println("path= " + path);
         if (files == null) {
             files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()).listFiles();
-            path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
+            path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
         }
-        if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"))
+        if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"))
             ArrayDir.add("<--");
         for (File aFile : files) {
-            if (aFile.isDirectory( ) | aFile.getName().substring(aFile.getName().lastIndexOf(".") + 1).equals("jpg")){
-                if (dir_opened(aFile.getPath( ))){
-                    ArrayDir.add(aFile.getName( ));
-                }
-                else
-                    ArrayDir.add(aFile.getName( ));
+            if (aFile.isDirectory() | aFile.getName().substring(aFile.getName().lastIndexOf(".") + 1).equals("jpg")) {
+                if (dir_opened(aFile.getPath())) {
+                    ArrayDir.add(aFile.getName());
+                } else
+                    ArrayDir.add(aFile.getName());
             }
         }
-        adapter.notifyDataSetChanged( );
+        adapter.notifyDataSetChanged();
         textPath.setText(path);
     }
 
     private boolean dir_opened(String url) {
         try {
-            File[] files = new File(url).listFiles( );
+            File[] files = new File(url).listFiles();
             for (@SuppressWarnings("unused") File aFile : files) {
             }
             return true;
@@ -235,7 +226,7 @@ class open_dir {
     }
 
     public void alertdialog(final String filename) {
-        final CharSequence[] items = {"Создать папку","Удалить","Отправить папку","Копировать","Вырезать","Вставить","Переименовать", "Информация"};//имена методов Ваших в списке
+        final CharSequence[] items = {"Создать папку", "Удалить", "Отправить папку", "Копировать", "Вырезать", "Вставить", "Переименовать", "Информация"};//имена методов Ваших в списке
         final Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Выберите функцию");
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -275,7 +266,7 @@ class open_dir {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void dialogname(final String filename){
+    private void dialogname(final String filename) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Введите новое название").setView(R.layout.rename_dialog);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -296,7 +287,7 @@ class open_dir {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void dialogcreatefolder(){
+    private void dialogcreatefolder() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Введите название папки").setView(R.layout.rename_dialog);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -316,21 +307,21 @@ class open_dir {
         newName.setText("");
     }
 
-    private void dialoginfo(String filename){
+    private void dialoginfo(String filename) {
         //TODO: добавить определение информации о папках и файлах
         final AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Информация");
-        java.io.File file = new java.io.File(path+filename);
-        builder.setMessage("Название: "+filename+"\n"+"Вес: "+file.length());
+        java.io.File file = new java.io.File(path + filename);
+        builder.setMessage("Название: " + filename + "\n" + "Вес: " + file.length());
         builder.show();
     }
 
-    private void rename(String filename, String newFilename){
-        java.io.File file = new java.io.File(path+filename);
-        file.renameTo(new java.io.File(path+newFilename));
+    private void rename(String filename, String newFilename) {
+        java.io.File file = new java.io.File(path + filename);
+        file.renameTo(new java.io.File(path + newFilename));
     }
 
-    public void ShowDialogBox(String img_name, String img_path){
+    public void ShowDialogBox(String img_name, String img_path) {
         final Dialog dialog = new Dialog(_context);
         dialog.setContentView(R.layout.image);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

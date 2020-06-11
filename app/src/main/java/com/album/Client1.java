@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Client1 {
 
-    public static float compressionQuality = 1f;
+    public static int compressionQuality = 100;
 
     public static ArrayList<Photo> getCompressedFiles(String dir) throws IOException {
         ArrayList<Photo> photos = new ArrayList<>();
@@ -20,11 +20,11 @@ public class Client1 {
 
         for (File file : files) {
             Photo photo = new Photo();
-            if (compressionQuality != 1f) {
+            if (compressionQuality != 100) {
                 System.out.println("СЖИМАЕМ!");
                 bStream = new ByteArrayOutputStream();
                 Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
-                bmp.compress(Bitmap.CompressFormat.JPEG, (int)compressionQuality*100, bStream);
+                bmp.compress(Bitmap.CompressFormat.JPEG, compressionQuality, bStream);
                 photo.setSize(bStream.size());
                 String name = file.getName();
                 photo.setName(name);
