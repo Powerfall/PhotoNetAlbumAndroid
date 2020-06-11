@@ -1,4 +1,4 @@
-package com;
+/*package com;
 
 import com.client.Client;
 import explorer.Change;
@@ -96,3 +96,4 @@ public class ChatController {
         thread1.start();
     }
 }
+*/

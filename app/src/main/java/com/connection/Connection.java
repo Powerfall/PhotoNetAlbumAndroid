@@ -19,6 +19,7 @@ public class Connection implements Closeable {
     }
 
     public void sendMessage(Message message) throws IOException {
+        System.out.println(message.toString());
         synchronized (output){
             output.writeObject(message);
         }

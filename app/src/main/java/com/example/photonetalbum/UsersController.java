@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import static androidx.core.app.ActivityCompat.startActivityForResult;
 
-class open_dir {
+class UsersController {
     private GridView list_dir;
     private TextView textPath;
     private TextView code;
@@ -43,7 +43,8 @@ class open_dir {
     private String genCode = null;
     private EditText newName;
     private Client client;
-    public static int userNumber;
+    private int userNumber;
+    private String pathname;
 
     ArrayList<String> ArrayDir = new ArrayList<String>();
     ArrayAdapter<String> adapter;
@@ -58,7 +59,7 @@ class open_dir {
         adapter = new ArrayAdapter<String>(_context, android.R.layout.simple_list_item_1, ArrayDir);
         panel = (LinearLayout) page.findViewById(R.id.panelSize);
         list_dir.setAdapter(adapter);
-        open_dir.userNumber = userNumber;
+        this.userNumber = userNumber;
         update_list_dir();
         list_dir.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -143,10 +144,32 @@ class open_dir {
 
                     }
                 });
-                btnGO.setOnClickListener(v -> {
-                    client = new Client(userNumber, UUID.randomUUID().toString());
-                    genCode = client.getToken();
-                    setGcode(genCode);
+                btnGO.setOnClickListener(new View.OnClickListener( ) {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println(userNumber);
+                        client = new Client(userNumber, UUID.randomUUID( ).toString( ));
+                        genCode = client.getToken( );
+                        UsersController.this.setGcode(genCode);
+                        Thread thread = new Thread(new Runnable( ) {
+                            @Override
+                            public void run() {
+                                client.run( );
+                            }
+                        });
+                        thread.start();
+                        while (client.isClientCanConnect()) {
+                            if (client.isClientConnected()) {
+                                System.out.println(pathname);
+                                com.files.Folder aa = new com.files.Folder(new File(path.substring(0,path.length()-1)),pathname);
+                                System.out.println(aa);
+                                client.sendFolder(new com.files.Folder(new File(path.substring(0,path.length()-1)),pathname));
+                                client.setPathToFolder(path);
+                                //createChat("Токен сессии: " + client.getToken());
+                                break;
+                            }
+                        }
+                    }
                 });
                 break;
             case 2:
@@ -155,10 +178,13 @@ class open_dir {
                 paramfornull.width = 0;
                 panel.setLayoutParams(paramfornull);
                 btnGO.setText("Загрузить сюда");
-                btnGO.setOnClickListener(v -> {
-                    //TODO: сделать загрузку файлов с сервера
-                    btnGO.setText("Отправить изменения");
-                    textFolder.setText("Загруженная папка:");
+                btnGO.setOnClickListener(new View.OnClickListener( ) {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO: сделать загрузку файлов с сервера
+                        btnGO.setText("Отправить изменения");
+                        textFolder.setText("Загруженная папка:");
+                    }
                 });
                 break;
         }
@@ -190,6 +216,7 @@ class open_dir {
 
     private void update_list_dir() {
         if (select_id_list != -1) {
+            pathname = ArrayDir.get(select_id_list);
             path = path + ArrayDir.get(select_id_list) + "/";
         }
         select_id_list = -1;

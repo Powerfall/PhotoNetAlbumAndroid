@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private View fragUserConnect;
     private EditText connectioCode;
     private Button btnConnect;
+    private View fragChat;
     private final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
     private boolean isconnect = false;
     private Client client;
@@ -49,16 +50,19 @@ public class MainActivity extends AppCompatActivity {
                     viewPager.setVisibility(View.VISIBLE);
                     fragUser2.setVisibility(View.INVISIBLE);
                     fragUserConnect.setVisibility(View.INVISIBLE);
+                    fragChat.setVisibility(View.INVISIBLE);
                     return true;
                 case R.id.navigation_dashboard:
                     viewPager.setVisibility(View.INVISIBLE);
                     Folder.setVisibility(View.INVISIBLE);
                     fragUser2.setVisibility(View.INVISIBLE);
                     fragUserConnect.setVisibility(View.INVISIBLE);
+                    fragChat.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_notifications:
                     viewPager.setVisibility(View.INVISIBLE);
                     Folder.setVisibility(View.INVISIBLE);
+                    fragChat.setVisibility(View.INVISIBLE);
                     if (isconnect) fragUser2.setVisibility(View.VISIBLE);
                     else fragUserConnect.setVisibility(View.VISIBLE);
                     return true;
@@ -81,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (NonSweepViewPager) findViewById(R.id.viewpager);
         fragUser2 = (View) findViewById(R.id.fragUser2);
         fragUser2.setVisibility(View.INVISIBLE);
+        fragChat = (View) findViewById(R.id.fragChat);
+        fragChat.setVisibility(View.INVISIBLE);
         fragUserConnect = (View) findViewById(R.id.fragUserConnect);
         connectioCode = (EditText) fragUserConnect.findViewById(R.id.conCode);
         fragUserConnect.setVisibility(View.INVISIBLE);
@@ -88,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                connection();
+                try {
+                    connection();
+                } catch (InterruptedException e) {
+                    e.printStackTrace( );
+                }
             }
         });
         setupViewPager(viewPager);
@@ -123,13 +133,19 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    public void connection() {
+    public void connection() throws InterruptedException {
         if (!connectioCode.getText().toString().trim().isEmpty()) {
-            client = new Client(open_dir.userNumber, connectioCode.getText().toString());
-            Thread thread = new Thread(() -> client.run());
+            client = new Client(2, connectioCode.getText().toString());
+            Thread thread = new Thread(new Runnable( ) {
+                @Override
+                public void run() {
+                    client.run( );
+                }
+            });
             thread.setDaemon(true);
             thread.start();
             while (client.isClientCanConnect()) {
+                Thread.sleep(500);
                 if (client.isClientConnected()) {
                     if (Client2.sizeChangedListener()) {
                         InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -142,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "Неверный код", Toast.LENGTH_SHORT)
                                 .show();
                     }
+                    break;
                 }
             }
         }

@@ -2,12 +2,13 @@ package explorer;
 
 import android.os.Build;
 import androidx.annotation.RequiresApi;
-import com.ChatController;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
+
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public class Changes implements Serializable {
         ArrayList<Change> listOfChanges = changes.getChanges();
 
         for (Change change : listOfChanges) {
-            ChatController.setChange(change);
+            //ChatController.setChange(change);
             switch (change.getChangeType()) {
                 case ADD_FOLDER: {
                     File newFolder = new File(pathToFolder + "\\" + change.getNew_path() + "\\" + change.getNew_name());
@@ -63,7 +64,7 @@ public class Changes implements Serializable {
     }
 
     public void addNewChange(Change change) {
-        ChatController.setChange(change);
+        //ChatController.setChange(change);
         changes.add(change);
     }
 

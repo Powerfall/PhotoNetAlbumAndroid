@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 public class PageFragmentUser2 extends Fragment {
 
     private ViewGroup root;
-    private open_dir a = new open_dir();
+    private UsersController a = new UsersController();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

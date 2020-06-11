@@ -3,7 +3,6 @@ package com.client;
 import android.annotation.TargetApi;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
-import com.ChatController;
 import com.album.Client2;
 import com.connection.Connection;
 import com.connection.Message;
@@ -66,7 +65,7 @@ public class Client {
     }
 
     private String getServerIP() {
-        return "0.0.0.0";//TODO: Реализовать получение IP сервера
+        return "192.168.0.105";//TODO: Реализовать получение IP сервера
     }
 
     public String getToken() {
@@ -86,6 +85,7 @@ public class Client {
             if (this.userNumber == 1) {
                 sessionFolder = folder;
                 cnt_photos = sessionFolder.getFiles().size();
+                System.out.println(folder.getName()+"   "+folder.getId());
                 connection.sendMessage(new Message(MessageType.FOLDER, new Folder(folder.getName(), folder.getId()), id, token));
             } else {
                 connection.sendMessage(new Message(MessageType.FOLDER, folder, id, token));
@@ -206,12 +206,12 @@ public class Client {
                     Client2.addNewFolder(message.getFolder());
                     sessionFolder = message.getFolder();
                 } else if (message.getMsgType() == MessageType.TEXT) {
-                    ChatController.setText(message.getText());
+                    //ChatController.setText(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
                     sendMessage(new Message(MessageType.PHOTO_CNT, String.valueOf(cnt_photos), id, token));
                     ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder() + "\\" + sessionFolder.getName());
                     sendedPhotos = photosToSend;
-                    sendedPhotos.forEach(item -> System.out.println(item.toString()));
+                    //sendedPhotos.forEach(item -> System.out.println(item.toString()));
                     int i = 1;
                     for (Photo photo : photosToSend) {
                         sendPhoto(photo, i);

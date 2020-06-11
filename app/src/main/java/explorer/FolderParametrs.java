@@ -1,5 +1,7 @@
 package explorer;
 
+import android.os.Build;
+import androidx.annotation.RequiresApi;
 import com.files.Folder;
 import com.files.Photo;
 
@@ -12,6 +14,7 @@ public class FolderParametrs {
     private long size = 0;
     private ArrayList<Object> listOfFiles = new ArrayList<>();
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void createTheTree(File folder, String name) {
         if (Objects.nonNull(folder.listFiles())) {
             for (File file : folder.listFiles()) {
