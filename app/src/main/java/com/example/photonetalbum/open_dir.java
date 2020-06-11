@@ -19,30 +19,34 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import com.client.Client;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static androidx.core.app.ActivityCompat.startActivityForResult;
 
-public class open_dir {
-    GridView list_dir;
-    TextView textPath;
-    TextView code;
-    Button btnGO;
-    Context _context;
-    int select_id_list = -1;
-    LinearLayout panel;
-    TextView textFolder;
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
-    String genCode = null;
-    EditText newName;
+class open_dir {
+    private GridView list_dir;
+    private TextView textPath;
+    private TextView code;
+    private Button btnGO;
+    private Context _context;
+    private int select_id_list = -1;
+    private LinearLayout panel;
+    private TextView textFolder;
+    private String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
+    private String genCode = null;
+    private EditText newName;
+    private Client client;
+    private int userNumber;
 
     ArrayList<String> ArrayDir = new ArrayList<String>( );
     ArrayAdapter<String> adapter;
 
-    protected void onCreate(Context con, View page, int userNumber) {
+    protected void onCreate(Context con, View page, final int userNumber) {
         _context = con;
         list_dir = (GridView) page.findViewById(R.id.grid_view);
         textPath = (TextView) page.findViewById(R.id.toPath);
@@ -52,6 +56,7 @@ public class open_dir {
         adapter = new ArrayAdapter<String>(_context, android.R.layout.simple_list_item_1, ArrayDir);
         panel = (LinearLayout) page.findViewById(R.id.panelSize);
         list_dir.setAdapter(adapter);
+        this.userNumber = userNumber;
         update_list_dir();
         list_dir.setOnItemClickListener(new OnItemClickListener( ) {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -141,8 +146,8 @@ public class open_dir {
                 btnGO.setOnClickListener(new View.OnClickListener( ) {
                     @Override
                     public void onClick(View v) {
-                        //TODO: сделать запуск сессии и генерацию кода
-                        genCode = "2f4s5";
+                        client = new Client(userNumber, UUID.randomUUID().toString());
+                        genCode = client.getToken();
                         setGcode(genCode);
                     }
                 });
